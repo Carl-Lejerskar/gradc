@@ -1,0 +1,4 @@
+# ignore debug dir
+*.dSYM/
+# ignore binaries
+tensor_tests
