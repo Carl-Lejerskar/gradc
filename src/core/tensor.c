@@ -5,7 +5,7 @@
 #include <string.h>
 
 /* Constructor */
-Tensor* create_tensor(size_t n_dims, const size_t *shape) {
+Tensor* tensor_create(size_t n_dims, const size_t *shape) {
 
     Tensor *tensor = (Tensor*) malloc(sizeof(Tensor));
 
@@ -16,7 +16,6 @@ Tensor* create_tensor(size_t n_dims, const size_t *shape) {
 
     tensor->n_dims = n_dims;
     tensor->shape = clone_array((void *) shape, n_dims, sizeof(size_t));
-
     tensor->steps = (size_t *) zeros(n_dims, sizeof(size_t));
 
     if (!tensor->steps) {
@@ -27,13 +26,12 @@ Tensor* create_tensor(size_t n_dims, const size_t *shape) {
     }
 
 
-    // step_size starts as 1 as at the deepest dim you iterate element by element
-
+    // step_size starts as 1 as in the deepest dim you iterate element by element
     size_t step_size = 1;
-    // start at deepest dim, n_dims-1
     if (n_dims > 0) {
         size_t i = n_dims;
         while (i > 0) {
+            // start at deepest dim
             i--;
             tensor->steps[i] = step_size;
             // multiply by dim's respective shape 
@@ -49,10 +47,8 @@ Tensor* create_tensor(size_t n_dims, const size_t *shape) {
     tensor->data = zeros(step_size, sizeof(float));
 
     if (!tensor->data) {
-        free(tensor->shape);
         perror("malloc failed on tensor->data");
-        free(tensor->steps);
-        free(tensor);
+        tensor_free(tensor);
         return NULL;
     }
 
@@ -61,7 +57,21 @@ Tensor* create_tensor(size_t n_dims, const size_t *shape) {
     return tensor;
 }
 
-void free_tensor(Tensor* tensor) {
+Tensor* tensor_from_array(size_t n_dims, const size_t *shape, const float* values) {
+    Tensor* tensor = tensor_create(n_dims, shape);
+
+    if (!tensor) {
+        fprintf(stderr, "Tensor creation failed when initializing from array...");
+    }
+
+    for (size_t i = 0; i < tensor->size; i++) {
+        tensor->data[i] = values[i];
+    }
+
+    return tensor;
+}
+
+void tensor_free(Tensor* tensor) {
     if (tensor) {
         free(tensor->shape);
         free(tensor->steps);
@@ -69,7 +79,7 @@ void free_tensor(Tensor* tensor) {
     }
 }
 
-void print_tensor(Tensor* tensor) {
+void tensor_print(Tensor* tensor) {
     if (!tensor || !tensor->data) {
         printf("You're trying to print an empty tensor...");
         return;
@@ -101,5 +111,3 @@ void print_tensor(Tensor* tensor) {
         return;
     }
 }
-
-

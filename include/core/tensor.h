@@ -10,8 +10,10 @@ typedef struct {
     float *data;
 } Tensor;
 
-Tensor* create_tensor(size_t n_dims, const size_t *shape);
-void free_tensor(Tensor* tensor);
-void print_tensor(Tensor* tensor);
+Tensor* tensor_create(size_t n_dims, const size_t *shape);
+Tensor* tensor_from_array(size_t n_dims, const size_t *shape, const float* values);
+
+void tensor_free(Tensor* tensor);
+void tensor_print(Tensor* tensor);
 
 #endif

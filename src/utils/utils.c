@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdbool.h>
 
 /* Clone an array on the heap */
 void* clone_array(const void* arr, size_t len, size_t byte_size) {
@@ -28,5 +29,17 @@ void print_array(const float* arr, size_t len) {
         }
     }
     printf("]\n");
+}
+
+bool array_equals(const void* a, const void* b, size_t size) {
+    const unsigned char* a_bytes = a;
+    const unsigned char* b_bytes = b;
+
+    for (size_t i = 0; i < size; i++) {
+        if (a_bytes[i] != b_bytes[i]) {
+            return false;
+        }
+    }
+    return true;
 }
 
